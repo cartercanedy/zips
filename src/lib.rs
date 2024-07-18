@@ -1,3 +1,5 @@
+// Copyright (c) 2024 Carter Canedy <cartercanedy42@gmail.com>
+
 use {
   proc_macro::TokenStream,
   syn::{parse_macro_input, Expr, Token},
