@@ -1,0 +1,16 @@
+[package]
+name = "zips"
+description = "macro for zipping more than just 2 instances of Option<T>"
+version = "0.1.0"
+edition = "2021"
+author = "Carter Canedy"
+email = "cartercanedy42@gmail.com"
+repository = "https://github.com/cartercanedy/zips"
+
+[lib]
+proc-macro = true
+
+[dependencies]
+syn = { version = "2.0.71", default-features = false, features = ["parsing", "derive", "proc-macro", "printing"] }
+quote = "1.0.36"
+proc-macro2 = "1.0.86"
