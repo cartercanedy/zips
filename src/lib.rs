@@ -34,15 +34,21 @@ impl Parse for ZipArgs {
   }
 }
 
-/// Expands into a single `Option<(T [, T...])>::Some((...))` instance if all arguments
-/// are instances of `Some((T [, T...]))`, else expands to `None`
+/// Expands into a single `Some((T1 [, T2...]))` instance if all arguments
+/// are instances of `Some(<T>)`, else expands to `None`
 ///
 /// ## Usage:
 /// ```
-/// let zipped_some = zip!(Some(0), Some(1));
-/// assert_eq!(zipped_some, Some((0, 1)));
+/// let i: Option<i32> = Some(0);
+/// let j: Option<usize> = Some(1usize);
+/// let k: Option<usize> = None;
 ///
-/// let zipped_none = zip!(Some(0), None);
+/// //  zipped_some: Option<(i32, usize)>
+/// let zipped_some = zip!(i, j);
+/// assert_eq!(zipped_some, Some((0, 1usize)));
+///
+/// //  zipped_none: Option<(i32, usize, usize)>
+/// let zipped_none = zip!(i, j, j);
 /// assert_eq!(zipped_none, None);
 /// ```
 #[proc_macro]
@@ -75,16 +81,22 @@ impl Parse for ZipResultArgs {
   }
 }
 
-/// Expands into a single `Option<(T [, T...])>::Some((...))` instance if all arguments
-/// are instances of `Some((T [, T...]))`, else expands to `None`
+/// Expands into a single `Some((T1 [, T2...]))` instance if all arguments
+/// are instances of `Ok(<T>)`, else expands to `None`
 ///
 /// ## Usage:
 /// ```
-/// let zipped_some = zip!(Some(0), Some(1));
-/// assert_eq!(zipped_some, Some((0, 1)));
+/// let i: Result<i32, String> = Ok(1);
+/// let j: Result<usize, String> = Ok(0usize);
+/// let k: Result<usize, String> = Err("I'm an error!");
 ///
-/// let zipped_none = zip!(Some(0), None);
-/// assert_eq!(zipped_none, None);
+/// //  zipped_ok: Option<(i32, usize)>
+/// let zipped_ok = zip_result!(i, j);
+/// assert_eq!(zipped_some, Some((1, 0usize)));
+///
+/// //  zipped_err: Option<(i32, usize, usize)>
+/// let zipped_err = zip_result!(i, j, k);
+/// assert_eq!(zipped_err, None);
 /// ```
 #[proc_macro]
 pub fn zip_result(input: TokenStream) -> TokenStream {
