@@ -1,12 +1,6 @@
 // Copyright (c) 2024 Carter Canedy <cartercanedy42@gmail.com>
 
-use {
-  proc_macro::TokenStream,
-  syn::{parse_macro_input, Expr, Token},
-  syn::parse::{Parse, ParseStream},
-  syn::punctuated::Punctuated,
-  quote::quote,
-};
+#![feature(macro_metavar_expr)]
 
 type ZipToken = Punctuated<Expr, Token![,]>;
 
@@ -39,7 +33,8 @@ impl Parse for ZipArgs {
 ///
 /// ## Usage:
 /// ```
-/// use zips::zip;
+/// let zipped_some = zip!(Some(1), Some(2));
+/// assert_eq!(zipped_some, Some((1, 2)));
 ///
 /// let i: Option<i32> = Some(0);
 /// let j: Option<usize> = Some(1usize);
@@ -53,22 +48,23 @@ impl Parse for ZipArgs {
 /// let zipped_none = zip!(i, j, k);
 /// assert_eq!(zipped_none, None);
 /// ```
-#[proc_macro]
-pub fn zip(input: TokenStream) -> TokenStream {
-  let (ZipArgs { args }, arg_names) = extract_args!(input as ZipArgs);
-
-  let args = args.into_iter();
-
-  quote! {
-    {
-      #(let #arg_names = #args;)*
-      if #(#arg_names.is_some() &&)* true {
-        Some((#(#arg_names.unwrap()),*))
-      } else {
-        None
+#[macro_export]
+macro_rules! zip {
+  ($($args:expr),+) => ({
+    let mut ok = true;
+    $(
+      let arg${index()} = $args;
+      if arg${index()}.is_none() {
+        ok = false;
       }
+     )+
+
+    if ok {
+      Some(($(arg${index()}.unwrap(),)+))
+    } else {
+      None
     }
-  }.into()
+  });
 }
 
 /// Expands into a single `Some((T1 [, T2...]))` instance if all arguments
@@ -90,20 +86,21 @@ pub fn zip(input: TokenStream) -> TokenStream {
 /// let zipped_err = zip_result!(i, j, k);
 /// assert_eq!(zipped_err, None);
 /// ```
-#[proc_macro]
-pub fn zip_result(input: TokenStream) -> TokenStream {
-  let (ZipArgs { args }, arg_names) = extract_args!(input as ZipArgs);
-
-  let args = args.into_iter();
-
-  quote! {
-    {
-      #(let #arg_names = #args;)*
-      if #(#arg_names.is_ok() &&)* true {
-        Some((#(#arg_names.ok().unwrap()),*))
-      } else {
-        None
+#[macro_export]
+macro_rules! zip_result {
+  ($($args:expr),+) => ({
+    let mut ok = true;
+    $(
+      if $args.is_err() {
+        ok = false;
       }
+    )+
+
+    if ok {
+      Some(($($args.ok().unwrap(),)+))
+    } else {
+      None
     }
-  }.into()
+  });
 }
+
