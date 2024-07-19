@@ -1,55 +1,68 @@
 // Copyright (c) 2024 Carter Canedy <cartercanedy42@gmail.com>
 
-use {
-  proc_macro::TokenStream,
-  syn::{parse_macro_input, Expr, Token},
-  syn::parse::{Parse, ParseStream},
-  syn::punctuated::Punctuated,
-  quote::quote,
-};
+#![feature(macro_metavar_expr)]
 
-struct ZipArgs {
-  args: Punctuated<Expr, Token![,]>
-}
-
-impl Parse for ZipArgs {
-  fn parse(input: ParseStream) -> syn::Result<Self> {
-    Ok(Self {
-      args: Punctuated::<Expr, Token![,]>::parse_terminated(input)?
-    })
-  }
-}
-
-/// Expands into a single `Option<(T [, T...])>::Some((...))` instance if all arguments
-/// are instances of `Option<T>::Some(T)`, else expands to `Option<(T [, T...])>::None`
+/// Zips multiple instances of Option<T> into a single instance of Option<(T [, T...])>. Will
+/// either be Some if all arguments are some, or None if one of the instances is None.
 ///
-/// Usage:
+/// ## Usage:
 /// ```
-/// use zips::zip;
+/// let zipped_some = zip!(Some(1), Some(2));
+/// assert_eq!(zipped_some, Some((1, 2)));
 ///
-/// fn main() -> () {
-///     let zipped = zip!(Some(0), Some(1));
-///     assert_eq!(zipped, Some(0, 1));
-/// }
+/// let zipped_none = zip!(Some(1), None);
+/// assert_eq!(zipped_none, None);
 /// ```
-#[proc_macro]
-pub fn zip(input: TokenStream) -> TokenStream {
-  let ZipArgs { args } = parse_macro_input!(input as ZipArgs);
-  let arg_names: Vec<_> =
-    (0..args.len())
-      .map(|i| syn::Ident::new(&format!("arg{i}"), proc_macro2::Span::call_site()))
-      .collect();
-
-  let args = args.into_iter();
-
-  quote! {
-    {
-      #(let #arg_names = #args;)*
-      if #(#arg_names.is_some() &&)* true {
-        Some((#(#arg_names.unwrap()),*))
-      } else {
-        None
+#[macro_export]
+macro_rules! zip {
+  ($($args:expr),+) => ({
+    let mut ok = true;
+    $(
+      let arg${index()} = $args;
+      if arg${index()}.is_none() {
+        ok = false;
       }
+     )+
+
+    if ok {
+      Some(($(arg${index()}.unwrap(),)+))
+    } else {
+      None
     }
-  }.into()
+  });
+}
+
+/// Zips an arbitrary number of `Result<T>` into a single instance of `Option<(T [, T...])>`. If
+/// any arguments are `Err`, `None` is returned. Otherwise, `Some` is returned.
+///
+/// ## Usage:
+/// ```
+/// let i: Result<i32, String> = Ok(1);
+/// let j: Result<usize, String> = Ok(0usize);
+/// let k: Result<usize, String> = Err("I'm an error");
+///
+/// // zipped_ok: Option<(i32, usize)>
+/// let zipped_ok = zip_result!(i, j);
+/// assert_eq!(zipped_ok, Some(1, 0usize));
+///
+/// // zipped_err: Option<(i32, usize, usize)> 
+/// let zipped_err = zip_result!(i, j, k);
+/// assert_eq!(zipped_err, None);
+/// ```
+#[macro_export]
+macro_rules! zip_result {
+  ($($args:expr),+) => ({
+    let mut ok = true;
+    $(
+      if $args.is_err() {
+        ok = false;
+      }
+    )+
+
+    if ok {
+      Some(($($args.ok().unwrap(),)+))
+    } else {
+      None
+    }
+  });
 }
