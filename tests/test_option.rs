@@ -1,3 +1,4 @@
+// Copyright (c) 2024 Carter Canedy <cartercanedy42@gmail.com>
 use zips::zip;
 
 fn return_some() -> Option<()> {
