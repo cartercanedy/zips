@@ -1,6 +1,7 @@
 ## zips
 just because I was annoyed that I couldn't use Option::zip with more than 2 arguments...
 
+[![testing](https://github.com/cartercanedy/zips/actions/workflows/rust.yml/badge.svg)](https://github.com/cartercanedy/zips/actions/workflows/rust.yml)
 
 ## Installation
 ```sh
