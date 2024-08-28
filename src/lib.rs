@@ -39,6 +39,8 @@ impl Parse for ZipArgs {
 ///
 /// ## Usage:
 /// ```
+/// use zips::zip;
+///
 /// let i: Option<i32> = Some(0);
 /// let j: Option<usize> = Some(1usize);
 /// let k: Option<usize> = None;
@@ -48,7 +50,7 @@ impl Parse for ZipArgs {
 /// assert_eq!(zipped_some, Some((0, 1usize)));
 ///
 /// //  zipped_none: Option<(i32, usize, usize)>
-/// let zipped_none = zip!(i, j, j);
+/// let zipped_none = zip!(i, j, k);
 /// assert_eq!(zipped_none, None);
 /// ```
 #[proc_macro]
@@ -74,13 +76,15 @@ pub fn zip(input: TokenStream) -> TokenStream {
 ///
 /// ## Usage:
 /// ```
-/// let i: Result<i32, String> = Ok(1);
-/// let j: Result<usize, String> = Ok(0usize);
-/// let k: Result<usize, String> = Err("I'm an error!");
+/// use zips::zip_result;
+///
+/// let i: Result<i32, &'static str> = Ok(1);
+/// let j: Result<usize, &'static str> = Ok(0usize);
+/// let k: Result<usize, &'static str> = Err("I'm an error!");
 ///
 /// //  zipped_ok: Option<(i32, usize)>
 /// let zipped_ok = zip_result!(i, j);
-/// assert_eq!(zipped_some, Some((1, 0usize)));
+/// assert_eq!(zipped_ok, Some((1, 0usize)));
 ///
 /// //  zipped_err: Option<(i32, usize, usize)>
 /// let zipped_err = zip_result!(i, j, k);
