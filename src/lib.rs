@@ -29,7 +29,7 @@ struct ZipArgs {
 impl Parse for ZipArgs {
   fn parse(input: ParseStream) -> syn::Result<Self> {
     Ok(Self {
-      args: Punctuated::<Expr, Token![,]>::parse_terminated(input)?
+      args: ZipToken::parse_terminated(input)?
     })
   }
 }
@@ -69,18 +69,6 @@ pub fn zip(input: TokenStream) -> TokenStream {
   }.into()
 }
 
-struct ZipResultArgs {
-  args: ZipToken
-}
-
-impl Parse for ZipResultArgs {
-  fn parse(input: ParseStream) -> syn::Result<Self> {
-    Ok(Self {
-      args: Punctuated::<Expr, Token![,]>::parse_terminated(input)?
-    })
-  }
-}
-
 /// Expands into a single `Some((T1 [, T2...]))` instance if all arguments
 /// are instances of `Ok(<T>)`, else expands to `None`
 ///
@@ -100,7 +88,7 @@ impl Parse for ZipResultArgs {
 /// ```
 #[proc_macro]
 pub fn zip_result(input: TokenStream) -> TokenStream {
-  let (ZipResultArgs { args }, arg_names) = extract_args!(input as ZipResultArgs);
+  let (ZipArgs { args }, arg_names) = extract_args!(input as ZipArgs);
 
   let args = args.into_iter();
 
