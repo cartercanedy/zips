@@ -1,7 +1,7 @@
 [package]
 name = "zips"
 description = "macro for zipping more than just 2 instances of Option<T>"
-version = "0.1.3"
+version = "0.1.4"
 edition = "2021"
 author = "Carter Canedy"
 email = "cartercanedy42@gmail.com"
