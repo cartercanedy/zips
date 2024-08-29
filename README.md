@@ -1,7 +1,7 @@
 # zips ![GitHub Actions Workflow Status](https://img.shields.io/github/actions/workflow/status/cartercanedy/zips/test.yml?style=for-the-badge&label=tests) ![Crates.io Total Downloads](https://img.shields.io/crates/d/zips?style=for-the-badge&label=downloads)
-just because I was annoyed that I couldn't use Option::zip with more than 2 arguments...
+just because I was annoyed that I couldn't use `Option<T>::zip` with more than 2 arguments...
 
-Zips provides 2 proc-macros that accept any number of either Option<T>'s or Result<T, E>'s as arguments and produces an Option<T\[, T...\]>.
+Zips provides 2 proc-macros that accept any number of either `Option<T>`s or `Result<T, E>`s as arguments and produces an `Option<(T [, T...])>`.
 
 ## Installation
 ```sh
@@ -40,3 +40,4 @@ fn main() -> () {
   assert_eq!(zipped_err, None);
 }
 ```
+
