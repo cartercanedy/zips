@@ -32,4 +32,4 @@ jobs:
       - name: Set version to current tag
         run: cargo set-version $(git name-rev --tags --all | head -n1 | awk '{sub("v", ""); sub("tags/", ""); sub("~.*", ""); sub("\\^.*", ""); print $2;}')
       - name: Publish to crates.io
-        run: cargo publish --token ${{ secrets.CRATE_PUBLISH_TOKEN }}
+        run: cargo publish --token ${{ secrets.CRATE_PUBLISH_TOKEN }} --allow-dirty
