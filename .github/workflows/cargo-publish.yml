@@ -3,13 +3,12 @@ name: publish
 on:
   create:
     tags:
-      - 'v[0-9]+.[0-9]+.[0-9]+'
+      - '^v[0-9]+.[0-9]+.[0-9]+'
 
 env:
   CARGO_TERM_COLOR: always
 
 jobs:
-
   verify-tests:
     runs-on: ${{ matrix.os }}
   
@@ -19,6 +18,7 @@ jobs:
   
     steps:
     - uses: actions/checkout@v4
+
     - name: Run tests
       run: cargo test --verbose
   
@@ -27,9 +27,12 @@ jobs:
     needs: [verify-tests]
     steps:
       - uses: actions/checkout@v4
+
       - name: Install cargo-edit/cargo-set-version
         run: cargo install cargo-edit --features vendored-openssl
+
       - name: Set version to current tag
-        run: cargo set-version $(git name-rev --tags --all | head -n1 | awk '{sub("v", ""); sub("tags/", ""); sub("~.*", ""); sub("\\^.*", ""); print $2;}')
+        run: cargo set-version $(git tag -l --sort="-taggerdate" | head -n1 | sed 's/^v//')
+
       - name: Publish to crates.io
-        run: cargo publish --token ${{ secrets.CRATE_PUBLISH_TOKEN }} --allow-dirty
+        run: cargo publish --token ${{ secrets.CRATE_PUBLISH_TOKEN }}
