@@ -1,7 +1,7 @@
 [package]
 name = "zips"
 description = "Macros for wrapping up a bunch of Option<T>'s/Result<T, E>'s into a single Option<(T [, T...])>"
-version = "0.1.4"
+version = "0.1.5"
 edition = "2021"
 author = "Carter Canedy"
 email = "cartercanedy42@gmail.com"
