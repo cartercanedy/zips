@@ -1,7 +1,5 @@
-## zips
+# zips ![GitHub Actions Workflow Status](https://img.shields.io/github/actions/workflow/status/cartercanedy/zips/rust.yml?style=for-the-badge&label=tests) ![Crates.io Total Downloads](https://img.shields.io/crates/d/zips?style=for-the-badge&label=downloads)
 just because I was annoyed that I couldn't use Option::zip with more than 2 arguments...
-
-[![testing](https://github.com/cartercanedy/zips/actions/workflows/rust.yml/badge.svg)](https://github.com/cartercanedy/zips/actions/workflows/rust.yml)
 
 ## Installation
 ```sh
