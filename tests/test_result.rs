@@ -66,7 +66,7 @@ pub fn test_result_1_arg_err() -> () {
 pub fn test_result_2_args_mixed() -> () {
   let res1: Result<i32, ()> = Ok(1i32);
   let res2: Result<&'static str, ()> = Err(());
-  
+
   let zipped = zip_result!(res1, res2);
 
   assert_eq!(zipped, None);
@@ -79,6 +79,36 @@ pub fn test_result_3_args_mixed() -> () {
   let res3: Result<i32, ()> = Ok(3i32);
 
   let zipped = zip_result!(res1, res2, res3);
+
+  assert_eq!(zipped, None);
+}
+
+#[test]
+pub fn test_result_ok_nested_invokations() -> () {
+  type Res = Result<(), ()>;
+  let a = Res::Ok(());
+  let b = Res::Ok(());
+  let c = Result::<i32, ()>::Ok(1i32);
+
+  let zipped = zip_result!(
+    Result::<_, ()>::Ok(zip_result!(a, b).unwrap()),
+    c
+  );
+
+  assert_eq!(zipped, Some((((), ()), 1i32)));
+}
+
+#[test]
+pub fn test_result_err_nested_invokations() -> () {
+  type Res = Result<(), ()>;
+  let a = Res::Ok(());
+  let b = Res::Ok(());
+  let c = Result::<(), i32>::Err(1i32);
+
+  let zipped = zip_result!(
+    Result::<_, ()>::Ok(zip_result!(a, b).unwrap()),
+    c
+  );
 
   assert_eq!(zipped, None);
 }

@@ -1,14 +1,6 @@
 // Copyright (c) 2024 Carter Canedy <cartercanedy42@gmail.com>
 use zips::zip;
 
-fn return_some() -> Option<()> {
-  Some(())
-}
-
-fn return_none() -> Option<()> {
-  None
-}
-
 #[allow(unused_parens)]
 #[test]
 pub fn test_zip_1_option() -> () {
@@ -40,15 +32,15 @@ pub fn test_zip_3_options() -> () {
 
 #[test]
 pub fn test_zip_1_option_none() -> () {
-  let opt1 = return_none();
+  let opt1 = Option::<()>::None;
   let zipped = zip!(opt1);
   assert_eq!(zipped, None);
 }
 
 #[test]
 pub fn test_zip_2_options_mixed() -> () {
-  let opt1 = return_none();
-  let opt2 = return_some();
+  let opt1 = Option::<()>::None;
+  let opt2 = Option::<()>::None;
 
   let zipped = zip!(opt1, opt2);
 
@@ -57,9 +49,9 @@ pub fn test_zip_2_options_mixed() -> () {
 
 #[test]
 pub fn test_zip_3_options_mixed() -> () {
-  let opt1 = return_none();
-  let opt2 = return_some();
-  let opt3 = return_some();
+  let opt1 = Option::<()>::None;
+  let opt2 = Some(Option::<()>::None);
+  let opt3 = Some(());
 
   let zipped = zip!(opt1, opt2, opt3);
 
@@ -69,23 +61,23 @@ pub fn test_zip_3_options_mixed() -> () {
 #[allow(unused_parens)]
 #[test]
 pub fn test_zip_some_unaliased_arg() -> () {
-  let zipped = zip!(return_some());
-  
-  assert_eq!(zipped, Some((())));
+  let zipped = zip!(Some(()));
+
+  assert_eq!(zipped, Some(()));
 }
 
 #[test]
 pub fn test_zip_none_unaliased_arg() -> () {
-  let zipped = zip!(return_none());
-  
+  let zipped = zip!(Option::<()>::None);
+
   assert_eq!(zipped, None);
 }
 
 #[test]
 pub fn test_zip_mixed_unaliased_args() -> () {
   let zipped = zip!(
-    return_some(),
-    return_none()
+    Some(()),
+    Option::<()>::None
   );
 
   assert_eq!(zipped, None);
@@ -95,9 +87,31 @@ pub fn test_zip_mixed_unaliased_args() -> () {
 pub fn test_zip_some_unaliased_args() -> () {
   let zipped = zip!(
     Some(1u32),
-    Some("2"),
+    Some(()),
     Some(3usize)
   );
-  
-  assert_eq!(zipped, Some((1u32, "2", 3usize)));
+
+  assert_eq!(zipped, Some((1u32, (), 3usize)));
+}
+
+#[test]
+pub fn test_zip_some_nested_invokations() -> () {
+  let a = Some(1i32);
+  let b = Some(0usize);
+  let c = Some(());
+
+  let zipped = zip!(zip!(a, b), c);
+
+  assert_eq!(zipped, Some(((1i32, 0usize), ())));
+}
+
+#[test]
+pub fn test_zip_none_nested_invokations() -> () {
+  let a = Some(1i32);
+  let b = Some(0usize);
+  let c = Option::<()>::None;
+
+  let zipped = zip!(a, zip!(b, c));
+
+  assert_eq!(zipped, None);
 }
