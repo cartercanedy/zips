@@ -12,7 +12,7 @@ $> cargo add zips
 
 ### With `Option<T>`:
 ```rust
-use zips::{zip, zip_result};
+use zips::zip;
 
 fn main() -> () {
   let i: Option<i32> = Some(0);
@@ -26,10 +26,14 @@ fn main() -> () {
   //  zipped_none: Option<((i32, usize), ())>
   let zipped_none = zip!(zipped_some, k);
   assert_eq!(zipped_none, None);
+}
 ```
 
 ### With `Result<T, E>`:
 ```rust
+use zips::zip_result;
+
+fn main() -> () {
   let m: Result<i32, ()> = Ok(1);
   let n: Result<usize, ()> = Ok(0usize);
   let o: Result<(), &'static str> = Err("I'm an error!");
