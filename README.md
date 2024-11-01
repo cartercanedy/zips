@@ -1,4 +1,4 @@
-# zips ![GitHub Actions Workflow Status](https://img.shields.io/github/actions/workflow/status/cartercanedy/zips/test.yml?style=for-the-badge&label=tests) ![Crates.io Total Downloads](https://img.shields.io/crates/d/zips?style=for-the-badge&label=downloads)
+# zips [![GitHub Actions Workflow Status](https://img.shields.io/github/actions/workflow/status/cartercanedy/zips/test.yml?style=for-the-badge&label=tests)](https://github.com/cartercanedy/zips/actions/workflows/test.yml/) [![Crates.io Total Downloads](https://img.shields.io/crates/d/zips?style=for-the-badge&label=downloads)](https://crates.io/crates/zips)
 Just because I was annoyed that I couldn't use `Option<T>::zip` with more than 2 arguments...
 
 Zips provides 2 proc-macros that accept any number of either `Option<T>`s or `Result<T, E>`s as arguments and produces an `Option<(T [, T...])>`.
@@ -41,6 +41,8 @@ fn main() -> () {
   //  zipped_ok: Option<(i32, usize)>
   let zipped_ok = zip_result!(m, n);
   assert_eq!(zipped_some, Some((1i32, 0usize)));
+
+  let zipped_ok: Result<(i32, usize), ()> = Ok(zipped_ok.unwrap());
  
   //  zipped_err: Option<((i32, usize), ())>
   let zipped_err = zip_result!(zipped_ok, o);
