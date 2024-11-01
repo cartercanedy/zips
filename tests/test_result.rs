@@ -1,7 +1,8 @@
 // Copyright (c) 2024 Carter Canedy <cartercanedy42@gmail.com>
+#![allow(unused_parens)]
+
 use zips::zip_result;
 
-#[allow(unused_parens)]
 #[test]
 pub fn test_result_1_arg() -> () {
   let res1: Result<u32, ()> = Ok(1u32);
@@ -31,7 +32,6 @@ pub fn test_result_3_args() -> () {
   assert_eq!(zipped, Some((1u32, "2", 3i32)));
 }
 
-#[allow(unused_parens)]
 #[test]
 pub fn test_result_ok_unaliased_args() -> () {
   fn return_ok() -> Result<i32, ()> {
