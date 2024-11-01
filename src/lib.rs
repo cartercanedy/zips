@@ -2,34 +2,33 @@
 
 use {
   proc_macro::TokenStream,
-  syn::{parse_macro_input, Expr, Token},
+  quote::quote,
   syn::parse::{Parse, ParseStream},
   syn::punctuated::Punctuated,
-  quote::quote,
+  syn::{parse_macro_input, Expr, Token},
 };
 
 type ZipToken = Punctuated<Expr, Token![,]>;
 
 macro_rules! extract_args {
-  ($input:ident as $type:ty) => ({
-      let args = parse_macro_input!($input as $type);
-      let arg_names: Vec<syn::Ident> = 
-        (0..args.args.len())
-          .map(|i| syn::Ident::new(&format!("arg{i}"), proc_macro2::Span::call_site()))
-          .collect();
+  ($input:ident as $type:ty) => {{
+    let args = parse_macro_input!($input as $type);
+    let arg_names: Vec<syn::Ident> = (0..args.args.len())
+      .map(|i| syn::Ident::new(&format!("arg{i}"), proc_macro2::Span::call_site()))
+      .collect();
 
-      (args, arg_names)
-  });
+    (args, arg_names)
+  }};
 }
 
 struct ZipArgs {
-  args: ZipToken
+  args: ZipToken,
 }
 
 impl Parse for ZipArgs {
   fn parse(input: ParseStream) -> syn::Result<Self> {
     Ok(Self {
-      args: ZipToken::parse_terminated(input)?
+      args: ZipToken::parse_terminated(input)?,
     })
   }
 }
@@ -68,7 +67,8 @@ pub fn zip(input: TokenStream) -> TokenStream {
         None
       }
     }
-  }.into()
+  }
+  .into()
 }
 
 /// Expands into a single `Some((T1 [, T2...]))` instance if all arguments
@@ -105,5 +105,6 @@ pub fn zip_result(input: TokenStream) -> TokenStream {
         None
       }
     }
-  }.into()
+  }
+  .into()
 }

@@ -75,21 +75,14 @@ pub fn test_zip_none_unaliased_arg() -> () {
 
 #[test]
 pub fn test_zip_mixed_unaliased_args() -> () {
-  let zipped = zip!(
-    Some(()),
-    Option::<()>::None
-  );
+  let zipped = zip!(Some(()), Option::<()>::None);
 
   assert_eq!(zipped, None);
 }
 
 #[test]
 pub fn test_zip_some_unaliased_args() -> () {
-  let zipped = zip!(
-    Some(1u32),
-    Some(()),
-    Some(3usize)
-  );
+  let zipped = zip!(Some(1u32), Some(()), Some(3usize));
 
   assert_eq!(zipped, Some((1u32, (), 3usize)));
 }
